@@ -14,7 +14,7 @@ class MakeService extends GeneratorCommand
     /**
      * STUB_PATH.
      */
-    const STUB_PATH = __DIR__.' /Stubs/';
+    const STUB_PATH = __DIR__ . '/Stubs/';
 
     /**
      * The name and signature of the console command.
@@ -43,13 +43,12 @@ class MakeService extends GeneratorCommand
 
     /**
      * @param bool $isContract
-     *
      * @return string
      */
     protected function getServiceStub(bool $isContract): string
     {
-        return self::STUB_PATH.
-            $isContract ? 'service.origin.stub' : 'service.stub';
+        return self::STUB_PATH .
+            ($isContract ? 'service.stub' : 'service.origin.stub');
     }
 
     /**
@@ -57,22 +56,22 @@ class MakeService extends GeneratorCommand
      */
     protected function getServiceContractStub(): string
     {
-        return self::STUB_PATH.'service.contract.stub';
+        return self::STUB_PATH . 'service.contract.stub';
     }
 
     /**
      * Execute the console command.
      *
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     *
      * @return bool|null
      *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      * @see \Illuminate\Console\GeneratorCommand
+     *
      */
     public function handle()
     {
         if ($this->isReservedName($this->getNameInput())) {
-            $this->error('The name "'.$this->getNameInput().'" is reserved by PHP.');
+            $this->error('The name "' . $this->getNameInput() . '" is reserved by PHP.');
 
             return false;
         }
@@ -84,7 +83,7 @@ class MakeService extends GeneratorCommand
         if ((! $this->hasOption('force') ||
                 ! $this->option('force')) &&
             $this->alreadyExists($this->getNameInput())) {
-            $this->error($this->type.' already exists!');
+            $this->error($this->type . ' already exists!');
 
             return false;
         }
@@ -92,20 +91,23 @@ class MakeService extends GeneratorCommand
         $this->makeDirectory($path);
         $isContract = $this->option('c');
 
-        $this->files->put($path, $this->sortImports(
-            $this->buildServiceClass($name, $isContract)
-        ));
+        $this->files->put(
+            $path,
+            $this->sortImports(
+                $this->buildServiceClass($name, $isContract)
+            )
+        );
         $message = $this->type;
 
         // Whether to create contract
         if ($isContract) {
-            $contractName = $this->getNameInput().'Contract.php';
-            $contractPath = str_replace($this->getNameInput().'.php', 'Contracts/', $path);
+            $contractName = $this->getNameInput() . 'Contract.php';
+            $contractPath = str_replace($this->getNameInput() . '.php', 'Contracts/', $path);
 
-            $this->makeDirectory($contractPath.$contractName);
+            $this->makeDirectory($contractPath . $contractName);
 
             $this->files->put(
-                $contractPath.$contractName,
+                $contractPath . $contractName,
                 $this->sortImports(
                     $this->buildServiceContractInterface($this->getNameInput())
                 )
@@ -114,7 +116,7 @@ class MakeService extends GeneratorCommand
             $message .= ' and Contract';
         }
 
-        $this->info($message.' created successfully.');
+        $this->info($message . ' created successfully.');
     }
 
     /**
@@ -122,10 +124,9 @@ class MakeService extends GeneratorCommand
      *
      * @param string $name
      * @param $isContract
+     * @return string
      *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     *
-     * @return string
      */
     protected function buildServiceClass($name, $isContract): string
     {
@@ -138,10 +139,9 @@ class MakeService extends GeneratorCommand
      * Build the class with the given name.
      *
      * @param string $name
+     * @return string
      *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     *
-     * @return string
      */
     protected function buildServiceContractInterface($name): string
     {
@@ -152,11 +152,10 @@ class MakeService extends GeneratorCommand
 
     /**
      * @param $rootNamespace
-     *
      * @return string
      */
     protected function getDefaultNamespace($rootNamespace): string
     {
-        return $rootNamespace.'\Services';
+        return $rootNamespace . '\Services';
     }
 }
